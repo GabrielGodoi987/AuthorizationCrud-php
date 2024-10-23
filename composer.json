@@ -1,0 +1,19 @@
+{
+    "name": "token/app",
+    "description": "Token generator and validator application",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Token\\App\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "gabrielgodoi987",
+            "email": "gabrielgodoi987@gmail.com"
+        }
+    ],
+    "require": {
+        "firebase/php-jwt": "^6.10"
+    }
+}

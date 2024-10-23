@@ -61,6 +61,12 @@ class UserModel
         $this->userRole = $userRole;
     }
 
+    public function isExistentUser($name, $email)
+    {
+        $isExistentEmail = $this->getUserByEmail($email);
+        return $isExistentEmail['email'] === $email;
+    }
+
     public function findAll()
     {
         $query = "SELECT * FROM $this->table";
@@ -99,9 +105,27 @@ class UserModel
     }
     public function getUserById($id)
     {
+        $query = "SELECT FROM $this->table WHERE $this->table.uder_id == :id";
+        try {
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(":id", $id);
+            $stmt->execute();
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (PDOException $th) {
+            return $th->getMessage();
+        }
     }
     public function getUserByUsername($username)
     {
+        $query = "SELECT * FROM $this->table WHERE $this->table.username == :username";
+        try {
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(":username", $username, PDO::PARAM_STR);
+            $stmt->execute();
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (PDOException $th) {
+            return $th->getMessage();
+        }
     }
     public function getUserByEmail($email)
     {
@@ -118,7 +142,6 @@ class UserModel
     }
     public function deleteUserById($id)
     {
-        $query = "";
     }
 
 }

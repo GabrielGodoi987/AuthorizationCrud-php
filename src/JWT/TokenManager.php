@@ -20,16 +20,13 @@ class TokenManager
 
     public function createToken($data)
     {
-        $id = $this->payload['id'] = $data->id;
+        $id = $this->payload['id'] = $data;
         if ($id == null) {
-            echo json_encode([
-                "msg" => "Campo id não foi passado"
-            ]);
-            return;
+            return "Campo id não foi passado";
         }
         try {
             $jwt = JWT::encode([$id], $this->key, $this->config["algorithm"]);
-            echo $jwt;
+            return $jwt;
         } catch (Exception $th) {
             return $th->getMessage();
         }

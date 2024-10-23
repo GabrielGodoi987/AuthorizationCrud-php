@@ -1,14 +1,17 @@
 <?php
 namespace Token\App\UserLogin\Controller;
 
+use Token\App\JWT\TokenManager;
 use Token\App\UserLogin\Model\UserModel;
 
 class UserController
 {
   private $userModel;
+  private $tokenController;
   public function __construct()
   {
     $this->userModel = new UserModel();
+    $this->tokenController = new TokenManager();
   }
   public function getHello()
   {
@@ -50,6 +53,13 @@ class UserController
       return;
     }
 
+    $userExists = $this->userModel->isExistentUser($data->username, $data->email);
+
+    if($userExists){
+      echo json_encode(["error"=> "Este email já existe em nossa base de dados"]);
+      return;
+    }
+
     $this->userModel->setUsername($data->username);
     $this->userModel->setEmail($data->email);
     $this->userModel->setPassword($data->password);
@@ -65,6 +75,26 @@ class UserController
   }
 
 
-  public function loginUser(){}
+  public function loginUser($data)
+  {
+    $userExists = $this->userModel->getUserByEmail($data->email);
+    if ($userExists && password_verify($data->password, $userExists["password"])) {
+      unset($userExists["password"]);
+      $token = $this->tokenController->createToken($userExists["user_id"]);
+      http_response_code(200);
+      echo json_encode(
+        [
+          'msg' => "Usuário autorizado",
+          "user" => [
+            "role" => $userExists['role'],
+            'token' => $token,
+          ]
+        ]
+      );
+    } else {
+      http_response_code(401);
+      echo json_encode(["error" => "Email ou senha inválidos."]);
+    }
+  }
 
 }

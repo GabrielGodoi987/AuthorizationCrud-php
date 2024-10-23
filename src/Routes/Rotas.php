@@ -13,7 +13,7 @@ class Rotas {
             ],
             'POST' => [
                 '/createuser' => [UserController::class, 'createUser'],
-                '/login' => [],
+                '/userlogin' => [UserController::class, 'loginUser'],
             ],
             'PUT' => [
                '/post/{id}' => [],
